@@ -5,25 +5,116 @@
 ### Question 1
 
 Avant tout dans cette exercice, il faut verifier qu'on se retrouve bien dans son repertoire personnel.
-    '''console
-    $ pwd
-    '''
-** NOTE :** Si vous n'êtes pas dans votre repertoire personnel utilisez cette commande pour y acceder. 
-    '''console
-    $ cd
-    '''
+
+    ~$ pwd
+
+**NOTE :** Si vous n'êtes pas dans votre repertoire personnel utilisez cette commande pour y acceder.
+
+    ~$ cd
 
 Pour créer le répertoire "mail" il faut taper la commande :
-    '''console
-    $ mkdir mail
-    '''
 
-Il faut définir les droits du propriétaire 
-    '''console
-    $ chmod 4700 mail
-    '''
+    ~$ mkdir mail
 
-Verifier qu'ils ont bien été attribués 
-    '''console
-    $ ls
-    '''
+### Question 2
+Il faut définir les droits du propriétaire
+
+    ~$ chmod 4711 mail
+
+
+Verifier qu'ils ont bien été attribués
+
+    ~$ ls -l
+
+Création du fichier contact.txt
+
+    ~$ nano contact.txt
+    ~$ chmod 700 contact.txt
+    ~$ ls -l
+
+
+Le fichier contact.txt contient les noms des personnes qui peuvent m'envoyer un mail
+
+    prof
+    hugoc
+    hugoe
+    joseph
+    bachar
+    ismael
+    marimoun
+    william
+    seydina
+
+### Question 3 
+Il faut modifier les droits attribués au groupe 
+
+    ~$ chmod 4711 envoi_message_ryan 
+
+### Question 4 
+
+Le script verifier_autorisation_destinataire.sh sert à verifier si l'utilisateur qui essaie d'envoyer un mail se trouve dans le fichier contact.txt
+
+```bash 
+    if  grep -q "$USER" /home/ryan/contact.txt ; then
+        exit 0
+    else
+        exit 1
+    fi
+```
+    ~$ chmod 711 verifier_autorisation_destinataire.sh
+
+
+### Question 5 
+Le script dans la question 4 est lancer dans le script envoyer__mail.sh 
+
+```bash
+    message="$1"
+
+    /home/ryan/verifier_autorisation_destinataire.sh
+
+    verif=$?
+
+    if [[ $verif == 0 ]]; then
+            /home/ryan/envoi_message_ryan   $message
+    else
+            echo "Vous ne pouvez pas envooyer de mail."
+    fi
+```
+
+    ~$ chmod 711 envoyer_mail.sh 
+
+Création du fichier envoyer_mail.md le README
+
+    ~$ nano envoyer_mail.md
+    ~$ chmod 744 envoyer_mail.md
+
+Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
+ 
+    # ENVOIE DE MAIL
+
+    Pour m'envoyer un mail, suivez ces étapes :
+
+    1. Utiliser le script **envoyer_mail.sh**.
+    2. Passez votre message à la suite du script.
+    **Example:**
+    > /home/ryan/envoyer_mail.sh " hi, wassup? "
+
+    ### Pour vous simplifiez la tache
+
+    Utilisez _envoyer_mail.sh "Votre message"_
+    Vous replacez votre message par ce que vous souhaitez envoyer.
+
+## Exercice 2 
+
+### Question 1
+
+    ~$ cp /usr/local/share/file/fake-users-base.csv exercice_2 
+
+### Question 2
+
+    ~$ head -n 1 exercice_2/fake-users-base.csv
+
+    ID;prenom;nom;age;sexe;email;Téléphone
+
+### Question 3
+
