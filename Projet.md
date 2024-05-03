@@ -133,11 +133,32 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 ### Question 4
 
     nano tri_age.sh
+
 ```bash
     age="$1"
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     awk -F ';' -v awk_var="$age" '$4 ~ awk_var { print }' $fichier
 
 ```
+
     chmod +x tri_age.sh
 
+### Question 5
+
+    nano remplacer.sh
+
+```bash
+    sed -i 's/Male/H/gI' ./fake-users-base.csv
+    sed -i 's/Female/F/gI' ./fake-users-base.csv
+```
+
+    chmod +x remplacer.sh
+
+### Question 6
+
+    nano unif_tel.sh
+```bash
+    fichier=./fake-users-base.csv
+    sed -i 's/+33/0/g' $fichier
+```
+    chmod +x unif_tel.sh
