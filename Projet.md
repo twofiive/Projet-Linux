@@ -20,7 +20,7 @@ Pour créer le répertoire "mail" il faut taper la commande :
 
 Il faut définir les droits du propriétaire
 
-    ~$ chmod 4711 mail
+    ~$ chmod 4710 mail
 
 Verifier qu'ils ont bien été attribués
 
@@ -48,13 +48,14 @@ Le fichier contact.txt contient les noms des personnes qui peuvent m'envoyer un 
 
 Il faut modifier les droits attribués au groupe
 
-    ~$ chmod 4711 envoi_message_ryan
+    ~$ chmod 4710 envoi_message_ryan
 
 ### Question 4
 
 Le script verifier_autorisation_destinataire.sh sert à verifier si l'utilisateur qui essaie d'envoyer un mail se trouve dans le fichier contact.txt
 
 ```bash
+    # Rechercher uniquement le nom de l'utilisateur dans le fichier  
     if  grep -q "$USER" /home/ryan/contact.txt ; then
         exit 0
     else
@@ -73,6 +74,7 @@ Le script dans la question 4 est lancer dans le script envoyer\_\_mail.sh
 
     /home/ryan/verifier_autorisation_destinataire.sh
 
+    # La variable verif récupère le exit du script
     verif=$?
 
     if [[ $verif == 0 ]]; then
@@ -91,16 +93,16 @@ Création du fichier envoyer_mail.md le README
 
 Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 
-    # ENVOIE DE MAIL
+    ENVOIE DE MAIL
 
     Pour m'envoyer un mail, suivez ces étapes :
 
-    1. Utiliser le script **envoyer_mail.sh**.
+    1. Utiliser le script envoyer_mail.sh.
     2. Passez votre message à la suite du script.
-    **Example:**
-    > /home/ryan/envoyer_mail.sh " hi, wassup? "
+    Example:
+    ~$ /home/ryan/envoyer_mail.sh " hi, wassup? "
 
-    ### Pour vous simplifiez la tache
+    Pour vous simplifiez la tache
 
     Utilisez _envoyer_mail.sh "Votre message"_
     Vous replacez votre message par ce que vous souhaitez envoyer.
@@ -122,9 +124,12 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
     ~/exercice_2$ nano resume.sh
 
 ```bash
-        #!/bin/bash
+    fichier=/home/ryan/exercice_2/fake-users-base.csv
+    
+    read -p "Saisissez l'ID: " id
 
-        awk -F ';' '{print $1" - "$3}' /home/ryan/exercice_2/fake-users-base.csv
+    # J'affiche la colonne ID et la colonne nom, en les séparant par un '-' et le -F est utilisé pour signigié que le séparateur dans le fichier est ';'
+    awk -F ';' -v awk_var="$id" '$1 == awk_var {print $1" - "$3}' /home/ryan/exercice_2/fake-users-base.csv
 ```
 
     ~/exercice_2$ chmod +x resume.sh
@@ -132,42 +137,44 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 
 ### Question 4
 
-    nano tri_age.sh
+    ~/exercice_2$ nano tri_age.sh
 
 ```bash
+    # La valeur de age est récuperé en argument
     age="$1"
     fichier=/home/ryan/exercice_2/fake-users-base.csv
+
+    # Ensuite toutes les informations sont données à partir de l'age correspondante
     awk -F ';' -v awk_var="$age" '$4 ~ awk_var { print }' $fichier
 
 ```
 
-    chmod +x tri_age.sh
+    ~/exercice_2$ chmod +x tri_age.sh
 
 ### Question 5
 
-    nano remplacer.sh
+    ~/exercice_2$ nano remplacer.sh
 
 ```bash
-    sed -i 's/Male/H/gI' ./fake-users-base.csv
-    sed -i 's/Female/F/gI' ./fake-users-base.csv
+        fichier=/home/ryan/exercice_2/fake-users-base.csv
+    sed -i 's/Male/H/gI' $fichier
+    sed -i 's/Female/F/gI' $fichier
 ```
 
-    chmod +x remplacer.sh
+    ~/exercice_2$ chmod +x remplacer.sh
 
 ### Question 6
 
-    nano unif_tel.sh
+    ~/exercice_2$ nano unif_tel.sh
 ```bash
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     sed -i 's/+33/0/g' $fichier
 ```
-    chmod +x unif_tel.sh
+    ~/exercice_2$ chmod +x unif_tel.sh
 
 ### Question 7
-    nano stats_email.sh
+    ~/exercice_2$ nano stats_email.sh
 ```bash
-    #!/bin/bash
-
     fichier=/home/ryan/exercice_2/fake-users-base.csv
 
     stat_fr=$(grep -i '.fr;' $fichier | wc -l)
@@ -224,17 +231,18 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
         esac
     done
 ```
-    chmod +x stats_email.sh
+
+    ~/exercice_2$ chmod +x stats_email.sh
 
 ### Question 8
 
-    nano promotion_mail.sh
+    ~/exercice_2$ nano promotion_mail.sh
 ```bash
     #!/bin/bash
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     awk -F ';' '$4 >= 20 && $4 <= 30  {print $2";"$3";"$6}' $fichier > utilisateur_mail.txt
 ```
-    chmod +x promotion_mail.sh
+    ~/exercice_2$ chmod +x promotion_mail.sh
 
 ## Exercice 3
 
