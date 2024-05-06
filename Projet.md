@@ -158,7 +158,88 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 
     nano unif_tel.sh
 ```bash
-    fichier=./fake-users-base.csv
+    fichier=/home/ryan/exercice_2/fake-users-base.csv
     sed -i 's/+33/0/g' $fichier
 ```
     chmod +x unif_tel.sh
+
+### Question 7
+    nano stats_email.sh
+```bash
+    #!/bin/bash
+
+    fichier=/home/ryan/exercice_2/fake-users-base.csv
+
+    stat_fr=$(grep -i '.fr;' $fichier | wc -l)
+    stat_com=$(grep -i '.com;' $fichier | wc -l)
+    stat_edu=$(grep -i '.edu;' $fichier | wc -l)
+
+    emails=("fr" "com" "edu" "Quitter")
+    PS3="Faites votre choix : "
+    les_adresses="gmail aol outlook hotmail yahoo icloud proton"
+    echo "Listes des extensions: "
+    select mail in "${emails[@]}"
+    do 
+        case $mail in 
+            "fr")
+                echo "Il y a $stat_fr adresss mail en .fr sur 1000."
+                read -p "Quel domain recherchez vous ? " adress
+                adrss_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
+                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
+                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
+                else
+                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
+                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
+                fi
+                ;;
+            "com")
+                echo "Il y a $stat_com adresss mail en .com sur 1000."
+                read -p "Quel domain recherchez vous ? " adress
+                adrss_mini_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
+                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
+                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
+                else
+                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
+                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
+                fi
+                ;;
+            "edu")
+                echo "Il y a $stat_edu adresss mail en .edu sur 1000."
+                read -p "Quel domain recherchez vous ? " adress
+                adrss_mini_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
+                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
+                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
+                else
+                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
+                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
+                fi
+                ;;
+            "Quitter")
+                echo "A la prochaine."
+                break
+                ;;
+            *)
+                echo "Choix invalide. Réessayer !"
+                ;;
+        esac
+    done
+```
+    chmod +x stats_email.sh
+
+### Question 8
+
+    nano promotion_mail.sh
+```bash
+    #!/bin/bash
+    fichier=/home/ryan/exercice_2/fake-users-base.csv
+    awk -F ';' '$4 >= 20 && $4 <= 30  {print $2";"$3";"$6}' $fichier > utilisateur_mail.txt
+```
+    chmod +x promotion_mail.sh
+
+## Exercice 3
+
+Un moyen d'obfusquer tous les mots de passes qui se trouvent dans les logs est de produit un hashage pour chacun d'eux en utilisant une commande (déjà installé ou à installer ) et stocker le résulats dans un fichier pour qu'il soit le moins visible possible.
+Tout en sachant qu'il ne sera pas possible par la suite d'inverser le hashage pour revenir au mot de passe initial.
+
+Ou encore on peut le faire en utilisant des fonctions et bibliotèques particulières dans des différents langages de programmation.
+Tel que bcrypt en Python, et crypt() en C... 
