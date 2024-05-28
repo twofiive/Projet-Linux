@@ -143,7 +143,7 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
     fichier=/home/ryan/exercice_2/fake-users-base.csv
 
     # Ensuite toutes les informations sont données à partir de l'age correspondante
-    awk -F ';' -v awk_var="$age" '$4 ~ awk_var { print }' $fichier
+    awk -F ';' 'NR>1 { print $4"="$0 }' $fichier | sort -n | cut -d '=' -f 2
 
 ```
 
