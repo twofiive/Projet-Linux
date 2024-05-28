@@ -127,7 +127,7 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     
     # J'affiche l'index et le nom de chaque colonne en les séparant par un '-' et le -F est utilisé pour signigié que le séparateur dans le fichier est ';'
-    awk -F ';' 'NR==1 {for (i=0, i<=NF, i++){ print i" - "$i} }' $fichier
+    awk -F ';' 'NR==1 {for (i=0; i<=NF; i++){ print i" - "$i} }' $fichier
 ```
 
     ~/exercice_2$ chmod +x resume.sh
