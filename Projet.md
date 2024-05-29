@@ -126,27 +126,21 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 ```bash
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     
-    read -p "Saisissez l'ID: " id
-
-    # J'affiche la colonne ID et la colonne nom, en les séparant par un '-' et le -F est utilisé pour signigié que le séparateur dans le fichier est ';'
-    awk -F ';' -v awk_var="$id" '$1 == awk_var {print $1" - "$3}' /home/ryan/exercice_2/fake-users-base.csv
+    # J'affiche l'index et le nom de chaque colonne en les séparant par un '-' et le -F est utilisé pour signigié que le séparateur dans le fichier est ';'
+    awk -F ';' 'NR==1 {for (i=0; i<=NF; i++){ print i" - "$i} }' $fichier
 ```
 
     ~/exercice_2$ chmod +x resume.sh
-    ~/exercice_2$ ./resume.sh
 
 ### Question 4
 
     ~/exercice_2$ nano tri_age.sh
 
 ```bash
-    # La valeur de age est récuperé en argument
-    age="$1"
     fichier=/home/ryan/exercice_2/fake-users-base.csv
 
-    # Ensuite toutes les informations sont données à partir de l'age correspondante
-    awk -F ';' -v awk_var="$age" '$4 ~ awk_var { print }' $fichier
-
+    # Ensuite toutes les informations sont trier à partir des ages en ordre croissante
+    awk -F ';' 'NR==1 { print } NR>1 { print $4"="$0 }' $fichier | sort -n | cut -d '=' -f 2
 ```
 
     ~/exercice_2$ chmod +x tri_age.sh
@@ -167,69 +161,17 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 
     ~/exercice_2$ nano unif_tel.sh
 ```bash
+#    sed est utilisé pour directement mettre les numéros sous un même format
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     sed -i 's/+33/0/g' $fichier
+    sed -i 's/ /./g' $fichier
 ```
     ~/exercice_2$ chmod +x unif_tel.sh
 
 ### Question 7
     ~/exercice_2$ nano stats_email.sh
 ```bash
-    fichier=/home/ryan/exercice_2/fake-users-base.csv
-
-    stat_fr=$(grep -i '.fr;' $fichier | wc -l)
-    stat_com=$(grep -i '.com;' $fichier | wc -l)
-    stat_edu=$(grep -i '.edu;' $fichier | wc -l)
-
-    emails=("fr" "com" "edu" "Quitter")
-    PS3="Faites votre choix : "
-    les_adresses="gmail aol outlook hotmail yahoo icloud proton"
-    echo "Listes des extensions: "
-    select mail in "${emails[@]}"
-    do 
-        case $mail in 
-            "fr")
-                echo "Il y a $stat_fr adresss mail en .fr sur 1000."
-                read -p "Quel domain recherchez vous ? " adress
-                adrss_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
-                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
-                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
-                else
-                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
-                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
-                fi
-                ;;
-            "com")
-                echo "Il y a $stat_com adresss mail en .com sur 1000."
-                read -p "Quel domain recherchez vous ? " adress
-                adrss_mini_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
-                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
-                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
-                else
-                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
-                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
-                fi
-                ;;
-            "edu")
-                echo "Il y a $stat_edu adresss mail en .edu sur 1000."
-                read -p "Quel domain recherchez vous ? " adress
-                adrss_mini_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
-                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
-                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
-                else
-                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
-                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
-                fi
-                ;;
-            "Quitter")
-                echo "A la prochaine."
-                break
-                ;;
-            *)
-                echo "Choix invalide. Réessayer !"
-                ;;
-        esac
-    done
+  awk -F ';' 'NR>1 { gsub(/.*@/, "", $6); print $6 }' fake-users-base.csv | sort | uniq -c | sort
 ```
 
     ~/exercice_2$ chmod +x stats_email.sh
@@ -240,9 +182,22 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 ```bash
     #!/bin/bash
     fichier=/home/ryan/exercice_2/fake-users-base.csv
-    awk -F ';' '$4 >= 20 && $4 <= 30  {print $2";"$3";"$6}' $fichier > utilisateur_mail.txt
+    sujet="Promotion mail"
+    
+    awk -F ';' '$4 >= 20 && $4 <= 30  {print $2";"$3";"$6}' $fichier > utilisateur_mail.csv
+    
+    mail.csv=/home/ryan/exercice_2/utilisateur_mail.csv
+    
+    while IFS=';' read -r prenom nom mail;
+    do
+            echo "Bonjour $prenom $nom, il y a une promotion qui concerne les personnes agées entre 20 a 30 ans" | mail -s $sujet $mail
+    done < $mail.csv 
 ```
     ~/exercice_2$ chmod +x promotion_mail.sh
+
+### Question 9
+
+    
 
 ## Exercice 3
 
