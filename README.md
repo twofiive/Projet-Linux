@@ -1,14 +1,14 @@
 # Projet
 
-## Excercice 1
+## Exercice 1
 
 ### Question 1
 
-Avant tout dans cette exercice, il faut verifier qu'on se retrouve bien dans son repertoire personnel.
+Avant tout dans cet exercice, il faut verifier qu'on se retrouve bien dans son repertoire personnel.
 
     ~$ pwd
 
-**NOTE :** Si vous n'êtes pas dans votre repertoire personnel utilisez cette commande pour y acceder.
+**NOTE :** Si vous n'êtes pas dans votre repertoire personnel, utilisez cette commande pour y accéder.
 
     ~$ cd
 
@@ -67,7 +67,7 @@ Le script verifier_autorisation_destinataire.sh sert à verifier si l'utilisateu
 
 ### Question 5
 
-Le script dans la question 4 est lancer dans le script envoyer\_\_mail.sh
+Le script dans la question 4 est lancé dans le script envoyer\_\_mail.sh
 
 ```bash
     message="$1"
@@ -80,7 +80,7 @@ Le script dans la question 4 est lancer dans le script envoyer\_\_mail.sh
     if [[ $verif == 0 ]]; then
             /home/ryan/envoi_message_ryan   $message
     else
-            echo "Vous ne pouvez pas envooyer de mail."
+            echo "Vous ne pouvez pas envoyer de mail."
     fi
 ```
 
@@ -126,25 +126,21 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 ```bash
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     
-    # J'affiche l'index et le nom de chaque colonne en les séparant par un '-' et le -F est utilisé pour signigié que le séparateur dans le fichier est ';'
+    # J'affiche l'index et le nom de chaque colonne en les séparant par un '-' et le -F est utilisé pour signifié que le séparateur dans le fichier est ';'
     awk -F ';' 'NR==1 {for (i=0; i<=NF; i++){ print i" - "$i} }' $fichier
 ```
 
     ~/exercice_2$ chmod +x resume.sh
-    ~/exercice_2$ ./resume.sh
 
 ### Question 4
 
     ~/exercice_2$ nano tri_age.sh
 
 ```bash
-    # La valeur de age est récuperé en argument
-    age="$1"
     fichier=/home/ryan/exercice_2/fake-users-base.csv
 
-    # Ensuite toutes les informations sont données à partir de l'age correspondante
-    awk -F ';' 'NR>1 { print $4"="$0 }' $fichier | sort -n | cut -d '=' -f 2
-
+    # Ensuite toutes les informations sont trier à partir des ages en ordre croissante
+    awk -F ';' 'NR==1 { print } NR>1 { print $4"="$0 }' $fichier | sort -n | cut -d '=' -f 2
 ```
 
     ~/exercice_2$ chmod +x tri_age.sh
@@ -165,69 +161,17 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 
     ~/exercice_2$ nano unif_tel.sh
 ```bash
+#    sed est utilisé pour directement mettre les numéros sous un même format
     fichier=/home/ryan/exercice_2/fake-users-base.csv
     sed -i 's/+33/0/g' $fichier
+    sed -i 's/ /./g' $fichier
 ```
     ~/exercice_2$ chmod +x unif_tel.sh
 
 ### Question 7
     ~/exercice_2$ nano stats_email.sh
 ```bash
-    fichier=/home/ryan/exercice_2/fake-users-base.csv
-
-    stat_fr=$(grep -i '.fr;' $fichier | wc -l)
-    stat_com=$(grep -i '.com;' $fichier | wc -l)
-    stat_edu=$(grep -i '.edu;' $fichier | wc -l)
-
-    emails=("fr" "com" "edu" "Quitter")
-    PS3="Faites votre choix : "
-    les_adresses="gmail aol outlook hotmail yahoo icloud proton"
-    echo "Listes des extensions: "
-    select mail in "${emails[@]}"
-    do 
-        case $mail in 
-            "fr")
-                echo "Il y a $stat_fr adresss mail en .fr sur 1000."
-                read -p "Quel domain recherchez vous ? " adress
-                adrss_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
-                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
-                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
-                else
-                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
-                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
-                fi
-                ;;
-            "com")
-                echo "Il y a $stat_com adresss mail en .com sur 1000."
-                read -p "Quel domain recherchez vous ? " adress
-                adrss_mini_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
-                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
-                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
-                else
-                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
-                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
-                fi
-                ;;
-            "edu")
-                echo "Il y a $stat_edu adresss mail en .edu sur 1000."
-                read -p "Quel domain recherchez vous ? " adress
-                adrss_mini_mini=$(echo "$adress" | tr '[:upper:]' '[:lower:]')
-                if [[ ! "$les_adresses" =~ "$adrss_mini" ]]; then
-                    echo "Choisissez parmi (gmail,outlook,protonmail,icloud,yahoo,aol,hotmail) en miniscule."
-                else
-                    stat=$(egrep -i "\\b${adrss_mini}\\.${mail};\\b" "$fichier" | wc -l)
-                    echo "Il y a ${stat} adressses mail avec ${adrss_mini} en (.${mail})."
-                fi
-                ;;
-            "Quitter")
-                echo "A la prochaine."
-                break
-                ;;
-            *)
-                echo "Choix invalide. Réessayer !"
-                ;;
-        esac
-    done
+  awk -F ';' 'NR>1 { gsub(/.*@/, "", $6); print $6 }' fake-users-base.csv | sort | uniq -c | sort
 ```
 
     ~/exercice_2$ chmod +x stats_email.sh
@@ -238,14 +182,75 @@ Le fichier envoyer_mail.md contient la procédure pour pouvoir m'envoyer un mail
 ```bash
     #!/bin/bash
     fichier=/home/ryan/exercice_2/fake-users-base.csv
-    awk -F ';' '$4 >= 20 && $4 <= 30  {print $2";"$3";"$6}' $fichier > utilisateur_mail.txt
+    sujet="Promotion mail"
+    
+    awk -F ';' '$4 >= 20 && $4 <= 30  {print $2";"$3";"$6}' $fichier > utilisateur_mail.csv
+    
+    mail.csv=/home/ryan/exercice_2/utilisateur_mail.csv
+    
+    while IFS=';' read -r prenom nom mail;
+    do
+            echo "Bonjour $prenom $nom, il y a une promotion qui concerne les personnes agées entre 20 a 30 ans" | mail -s $sujet $mail
+    done < $mail.csv 
 ```
     ~/exercice_2$ chmod +x promotion_mail.sh
 
+### Question 9
+
+    ~/exercice_2$ nano creation_utilisateur.sh
+
+J'ai preféré utilisé le while avec un IFS pour ensuite identifier directement chaque colonne pour une meilleure utilisation et je me suis permis d'ajouter le -s pour nommer le shell utiliser et -U pour créer un group au nom de l'utilisateur
+Le -m permet de créer l'utilisateur et créer un répertoire personnel à son nom /home/...
+J'ai créé le groupe proton avant la boucle pour qu'il soit fixe
+A la fin de la boucle, on peut voir que l'uid et ajouté d'un. 
+```bash
+    #!/bin/bash
+    
+    fichier=/home/ryan/exercice_2/fake-users-base.csv
+    uid=10001
+    info_personnelles="Nom: $nom, Prenom: $prenom, Age: $age, Sexe: $sexe, Email: $email, Telephone: $telephone"
+    groupadd -g 1100 proton
+    
+    while IFS=";" read -r id prenom nom age sexe email telephone;
+    do
+            if [[ $email =~ "protonmail.com" ]]; then
+                    echo $email
+                    sudo useradd -m $nom -u $uid -g proton -s /bin/bash -c $info_personnelles -U $nom>
+            fi
+    
+            ((uid++))
+    done < $fichier
+
+```
+        ~/exercice_2$ chmod +x creation_utilisateur.sh
+    
 ## Exercice 3
 
-Un moyen d'obfusquer tous les mots de passes qui se trouvent dans les logs est de produit un hashage pour chacun d'eux en utilisant une commande (déjà installé ou à installer ) et stocker le résulats dans un fichier pour qu'il soit le moins visible possible.
-Tout en sachant qu'il ne sera pas possible par la suite d'inverser le hashage pour revenir au mot de passe initial.
+     ~$ mkdir exercice_3
+     ~$ cd exercice_3
 
-Ou encore on peut le faire en utilisant des fonctions et bibliotèques particulières dans des différents langages de programmation.
-Tel que bcrypt en Python, et crypt() en C... 
+J'ai opté pour les trois commandes qu'on a apprises en cours, grep, regex et sed.
+La boucle for est utilisé pour parcourir tout le repertoire et ensuite un premier est utilisé pour viser uniquement les fichiers que je peux lire
+Le 2ᵉ if lui sert à verifier que dans ce fichier il y a bien une chaine correspondante à celle qu'on recherche -i ignore la casse et -q annule le résultat et retourne plutôt un code de retour 0 si c'est bon.
+Le sed remplace le regex trouvé par les 2 prémières captures et un hash, avec -i qui sert à modifier directement le fichier et /gi pour modifier toutes les occurrences en ignorant la casse.
+
+    ~/exercice_3$ nano obfuscation.sh
+
+```bash
+
+    dossier=/home/ryan/exercice_3/log
+    expressions="password|mot de passe"
+    for fichier in $dossier/*; do
+            if [[ -f $fichier && -r $fichier ]]; then
+                    if egrep -i -q "$expressions" "$fichier"; then
+                            echo "Modification du fichier: $fichier"
+                            sed -E -i "s/($expressions) ?([:=]) ?(.*)/\1\2 #*#*#*#*#*#/gi" $fichier
+                    else
+                            echo "$fichier ne contient pas de mots de passes."
+                    fi
+            fi
+    done
+```
+
+    ~/exercice_3$ chmod +x obfuscation.sh
+ 
